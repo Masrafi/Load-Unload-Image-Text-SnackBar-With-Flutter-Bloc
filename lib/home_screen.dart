@@ -15,7 +15,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<ImageBloc, ImageState>(
+      body: BlocConsumer<ImageBloc, ImageState>(
+        //BlocListener<ImageBloc, ImageState>(   Just comment above line. BlocConsumer = BlocListener + BlocBuilder
         listener: (context, state) {
           if (state is ImageIsNotLoadState) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -30,70 +31,70 @@ class _HomeScreenState extends State<HomeScreen> {
             ));
           }
         },
-        child: BlocBuilder<ImageBloc, ImageState>(
-          builder: (context, state) {
-            return Stack(
-              children: [
-                BlocBuilder<ImageBloc, ImageState>(
-                  builder: (context, state) {
-                    if (state is ImageIsLoadState) {
-                      return Center(
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 250,
-                            ),
-                            const Center(child: Text("Masrafi")),
-                            SizedBox(
-                              height: 50,
-                            ),
-                            Image.asset("assets/mas.jpg"),
-                          ],
-                        ),
-                      );
-                    }
-                    if (state is ImageIsNotLoadState) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return Container();
-                  },
+        // child: BlocBuilder<ImageBloc, ImageState>(
+        builder: (context, state) {
+          return Stack(
+            children: [
+              BlocBuilder<ImageBloc, ImageState>(
+                builder: (context, state) {
+                  if (state is ImageIsLoadState) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 250,
+                          ),
+                          const Center(child: Text("Masrafi")),
+                          SizedBox(
+                            height: 50,
+                          ),
+                          Image.asset("assets/mas.jpg"),
+                        ],
+                      ),
+                    );
+                  }
+                  if (state is ImageIsNotLoadState) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return Container();
+                },
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        BlocProvider.of<ImageBloc>(context)
+                            .add(ImageIsLodedEvent());
+                      },
+                      child: const Text(
+                        "Show",
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        BlocProvider.of<ImageBloc>(context)
+                            .add(ImageIsNotLodedEvent());
+                        //BlocProvider.of<ImageBloc>(context).add(ImageIsNotLodedEvent());
+                      },
+                      child: const Text(
+                        "Hide",
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
+                    ),
+                  ],
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          BlocProvider.of<ImageBloc>(context)
-                              .add(ImageIsLodedEvent());
-                        },
-                        child: const Text(
-                          "Show",
-                          style: TextStyle(fontSize: 20, color: Colors.black),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          BlocProvider.of<ImageBloc>(context)
-                              .add(ImageIsNotLodedEvent());
-                          //BlocProvider.of<ImageBloc>(context).add(ImageIsNotLodedEvent());
-                        },
-                        child: const Text(
-                          "Hide",
-                          style: TextStyle(fontSize: 20, color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            );
-          },
-        ),
+              )
+            ],
+          );
+        },
+        //),
       ),
     );
   }
